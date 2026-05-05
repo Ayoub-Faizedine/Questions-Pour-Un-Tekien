@@ -1,0 +1,18 @@
+PRINCIPAL :
+
+BOUCLE TANT QUE l'utilisateur ne choisit pas "Quitter" :
+    AFFICHER "1. Mode Enseignant"
+    AFFICHER "2. Mode Etudiant"
+    AFFICHER "3. Quitter"
+    
+    LIRE le choix de l'utilisateur
+    
+    SI choix == 1 ALORS
+        APPELER Fonction_Mode_Enseignant()
+    SINON SI choix == 2 ALORS
+        APPELER Fonction_Mode_Etudiant()
+    SINON SI choix == 3 ALORS
+        AFFICHER "Fin du programme"
+    SINON
+        AFFICHER "Erreur : choix invalide"
+FIN BOUCLE

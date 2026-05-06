@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// --- Prototypes des fonctions ---
+void Fonction_Mode_Enseignant();
+void Fonction_Mode_Etudiant();
+
+int main() {
+    int choix = 0;
+
+    // BOUCLE TANT QUE l'utilisateur ne choisit pas 3 (Quitter)
+    while (choix != 3) {
+        printf("\n--- MENU PRINCIPAL ---\n");
+        printf("1. Mode Enseignant\n");
+        printf("2. Mode Etudiant\n");
+        printf("3. Quitter\n");
+        printf("Votre choix : ");
+        
+        // Lecture du choix de l'utilisateur
+        if (scanf("%d", &choix) != 1) {
+            printf("Erreur : Entrez un nombre valide.\n");
+            while (getchar() != '\n'); // Vide le tampon en cas d'erreur de saisie
+            continue;
+        }
+
+        // Structure SI / SINON SI en C via un switch
+        switch (choix) {
+            case 1:
+                Fonction_Mode_Enseignant();
+                break;
+            case 2:
+                Fonction_Mode_Etudiant();
+                break;
+            case 3:
+                printf("Fin du programme\n");
+                break;
+            default:
+                printf("Erreur : choix invalide\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
+// --- Definition de la fonction Mode Etudiant ---
+void Fonction_Mode_Etudiant() {
+    int difficulte;
+
+    printf("\n--- MODE ETUDIANT ---\n");
+    printf("1. Mode Facile\n");
+    printf("2. Mode Intermediaire\n");
+    printf("3. Mode Difficile\n");
+    printf("Choisissez votre difficulte : ");
+    
+    scanf("%d", &difficulte);
+
+    switch (difficulte) {
+        case 1:
+            printf("Lancement du quiz en mode Facile...\n");
+            break;
+        case 2:
+            printf("Lancement du quiz en mode Intermediaire...\n");
+            break;
+        case 3:
+            printf("Lancement du quiz en mode Difficile...\n");
+            break;
+        default:
+            printf("Erreur : difficulte inconnue.\n");
+            break;
+    }
+}
+
+// --- Definition de la fonction Mode Enseignant ---
+void Fonction_Mode_Enseignant() {
+    printf("\n--- MODE ENSEIGNANT ---\n");
+    printf("Bienvenue. Ici vous pouvez gerer les questions.\n");
+}
+    // Utilisation d'un switch pour tester les différentes valeurs
+    switch (difficulte) {
+        case 1:
+            printf("Lancement du quiz en mode Facile...\n");
+            break;
+        case 2:
+            printf("Lancement du quiz en mode Intermediaire...\n");
+            break;
+        case 3:
+            printf("Lancement du quiz en mode Difficile...\n");
+            break;
+        default:
+            printf("Choix de difficulte invalide.\n");
+            break;
+    }
+}

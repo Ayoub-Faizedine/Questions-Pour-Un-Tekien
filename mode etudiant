@@ -1,0 +1,17 @@
+def Fonction_Mode_Etudiant():
+    print("\n--- Bienvenue dans le Mode Étudiant ---")
+    print("Veuillez choisir votre niveau de difficulté :")
+    print("1. Mode Facile")
+    print("2. Mode Intermédiaire")
+    print("3. Mode Difficile")
+    
+    difficulte = input("Votre choix : ")
+    
+    if difficulte == "1":
+        print("Lancement du quiz en mode Facile...")
+    elif difficulte == "2":
+        print("Lancement du quiz en mode Intermédiaire...")
+    elif difficulte == "3":
+        print("Lancement du quiz en mode Difficile...")
+    else:
+        print("Choix de difficulté invalide.")

@@ -49,7 +49,7 @@ défaut, chaque question fera le même nombre de points
 
 
 ## Détail
-- Plusieur Mode
+- Plusieurs Mode
 - Limite de Temps
 - Ranger les QCM par catégories.
 - Possibilité d’indiquer le nombre de points que vaut une question.
@@ -57,3 +57,4 @@ défaut, chaque question fera le même nombre de points
 -Possibilité de revenir sur une question précédente lorsqu’on passe
 un QCM
 - Vous pouvez implémenter d’autres améliorations de votre choix
+- Votre code sera généreusement commenté

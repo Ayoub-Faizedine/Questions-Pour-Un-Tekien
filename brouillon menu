@@ -76,19 +76,3 @@ void Fonction_Mode_Enseignant() {
     printf("\n--- MODE ENSEIGNANT ---\n");
     printf("Bienvenue. Ici vous pouvez gerer les questions.\n");
 }
-    // Utilisation d'un switch pour tester les différentes valeurs
-    switch (difficulte) {
-        case 1:
-            printf("Lancement du quiz en mode Facile...\n");
-            break;
-        case 2:
-            printf("Lancement du quiz en mode Intermediaire...\n");
-            break;
-        case 3:
-            printf("Lancement du quiz en mode Difficile...\n");
-            break;
-        default:
-            printf("Choix de difficulte invalide.\n");
-            break;
-    }
-}

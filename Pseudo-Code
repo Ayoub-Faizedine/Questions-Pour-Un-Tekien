@@ -16,3 +16,7 @@ BOUCLE TANT QUE l'utilisateur ne choisit pas "Quitter" :
     SINON
         AFFICHER "Erreur : choix invalide"
 FIN BOUCLE
+Si choix == 2 ALORS 
+    AFFICHER "1. Mode Facile"
+    AFFICHER "2. Mode Intermediare"
+    AFFICHER "3. Mode Difficile"

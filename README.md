@@ -30,6 +30,7 @@ puisse être réalisé ultérieurement
       de passer à la suivante (mode séquentiel).
        Ces paramètres seront valables pour l’ensemble du QCM et
       non pas par question.
+      Indiquer le nombre de question et le nombre de reponses possible par exemple
 
 
 ## Mode Étudiant

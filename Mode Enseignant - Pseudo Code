@@ -1,1 +1,14 @@
 
+----------------------- 1) Mot De Passe --------------------------
+
+Fonction VerifierAuthentification() : ENTIER
+
+Declare 'MotDePasse'
+Declare 'Saisirutilisateur'
+Declare 'EssaiRestant' = 3
+Declare 'Accès Validé'
+
+
+printf("Saisir le mot de passe");
+scanf("%s", SaisirUtilisateur);
+if(SaisirUtilisateur !=

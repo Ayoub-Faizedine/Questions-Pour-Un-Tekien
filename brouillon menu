@@ -42,37 +42,3 @@ int main() {
 
     return 0;
 }
-
-// --- Definition de la fonction Mode Etudiant ---
-void Fonction_Mode_Etudiant() {
-    int difficulte;
-
-    printf("\n--- MODE ETUDIANT ---\n");
-    printf("1. Mode Facile\n");
-    printf("2. Mode Intermediaire\n");
-    printf("3. Mode Difficile\n");
-    printf("Choisissez votre difficulte : ");
-    
-    scanf("%d", &difficulte);
-
-    switch (difficulte) {
-        case 1:
-            printf("Lancement du quiz en mode Facile...\n");
-            break;
-        case 2:
-            printf("Lancement du quiz en mode Intermediaire...\n");
-            break;
-        case 3:
-            printf("Lancement du quiz en mode Difficile...\n");
-            break;
-        default:
-            printf("Erreur : difficulte inconnue.\n");
-            break;
-    }
-}
-
-// --- Definition de la fonction Mode Enseignant ---
-void Fonction_Mode_Enseignant() {
-    printf("\n--- MODE ENSEIGNANT ---\n");
-    printf("Bienvenue. Ici vous pouvez gerer les questions.\n");
-}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h> 
+#include <time.h>
+#include <string.h>
+#include <math.h>
+
+void LancerModeEnseignant();
+void LancerModeEtudiant();
+
+
+int main(){
+
+	int choix = 0;
+
+	do{
+	printf("---------------------------------");
+	printf("-----Question Pour un Tekien-----");
+	printf("---------------------------------");
+	printf("1) Mode Enseignant");
+	printf("2) Mode Etudiant");
+	printf("3) Quitter");
+	printf("Votre Choix");
+	
+	if (scanf("%d", &choix) != 1){
+		printf("Erreur, veuillez saisir un nombre.\n");
+		while(getchar() != '\n');
+		continue;
+	}
+		
+		
+	switch(choix){
+		case 1 :
+			LancerModeEnseignant();
+			break;
+		
+		case 2 :
+			LancerModeEtudiant();
+			break;
+		
+		case 3 :
+			printf("Quitter");
+			break;
+		
+		default :
+			printf("Erreur : Choix Invalide");
+		}
+		
+	} while(choix != 3);
+
+return 0;
+}

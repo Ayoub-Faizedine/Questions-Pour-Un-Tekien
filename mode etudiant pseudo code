@@ -1,0 +1,53 @@
+// --- PHASE 1 : Initialisation et Fichier ---
+Afficher "Entrez le nom du fichier QCM :"
+Saisir nomFichier
+
+Ouvrir fichier en mode lecture
+Si (fichier non trouvé) Alors
+    Afficher "Erreur de lecture"
+    Quitter
+Fin Si
+
+// --- PHASE 2 : Chargement des paramètres et questions ---
+Lire dans fichier (difficulte, modeSequentiel, pointsNegatifs)
+Lire dans fichier (nbQuestions)
+
+Pour i allant de 0 à (nbQuestions - 1) Faire
+    Lire dans fichier (q[i].texte)
+    Lire dans fichier (q[i].choix[1..4])
+    Lire dans fichier (q[i].reponse_correcte, q[i].points)
+Fin Pour
+Fermer fichier
+
+// --- PHASE 3 : Déroulement du QCM ---
+Afficher "Début du test. Niveau : ", difficulte
+
+Pour i allant de 0 à (nbQuestions - 1) Faire
+    Afficher "Question ", i + 1, " : ", q[i].texte
+    Afficher "Choix : ", q[i].choix[1], q[i].choix[2], q[i].choix[3], q[i].choix[4]
+    
+    Saisir reponseUser
+    pointsMax ← pointsMax + q[i].points
+
+    // Vérification de la réponse
+    Si (reponseUser == q[i].reponse_correcte) Alors
+        Afficher "Correct !"
+        noteTotale ← noteTotale + q[i].points
+    Sinon
+        Afficher "Faux"
+        Si (pointsNegatifs == 1) Alors
+            Afficher "Malus appliqué"
+            noteTotale ← noteTotale - (q[i].points * 0.5)
+        Fin Si
+    Fin Si
+Fin Pour
+
+// --- PHASE 4 : Calcul du score final ---
+noteSur20 ← (noteTotale / pointsMax) * 20
+
+// Sécurité pour ne pas avoir de note négative
+Si (noteSur20 < 0) Alors
+    noteSur20 ← 0
+Fin Si
+
+Afficher "Note finale : ", noteSur20, "/ 20"

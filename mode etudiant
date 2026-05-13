@@ -1,27 +1,75 @@
-// --- Definition de la fonction Mode Etudiant ---
-void Fonction_Mode_Etudiant() {
-    int difficulte;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-    printf("\n--- MODE ETUDIANT ---\n");
-    printf("1. Mode Facile\n");
-    printf("2. Mode Intermediaire\n");
-    printf("3. Mode Difficile\n");
-    printf("Choisissez votre difficulte : ");
-    
-    scanf("%d", &difficulte);
+// Structures simples pour stocker les infos
+struct Question {
+    char texte[200];
+    char choix[4][100]; // 4 options par question
+    int reponse_correcte; // le numéro de la bonne réponse (1, 2, 3 ou 4)
+    float points;
+};
 
-    switch (difficulte) {
-        case 1:
-            printf("Lancement du quiz en mode Facile...\n");
-            break;
-        case 2:
-            printf("Lancement du quiz en mode Intermediaire...\n");
-            break;
-        case 3:
-            printf("Lancement du quiz en mode Difficile...\n");
-            break;
-        default:
-            printf("Erreur : difficulte inconnue.\n");
-            break;
+int main() {
+    char nomFichier[50];
+    int nbQuestions, i, reponseUser;
+    float noteTotale = 0, pointsMax = 0;
+    int modeSequentiel, pointsNegatifs, difficulte;
+
+    printf("=== MODE ETUDIANT ===\n");
+    printf("Nom du fichier QCM a ouvrir (ex: math.txt) : ");
+    scanf("%s", nomFichier);
+
+    FILE *fichier = fopen(nomFichier, "r");
+    if (fichier == NULL) {
+        printf("Erreur : Le fichier n'existe pas.\n");
+        return 1;
     }
+
+    // 1. Lire les réglages du QCM (enregistrés par l'enseignant)
+    fscanf(fichier, "%d %d %d", &difficulte, &modeSequentiel, &pointsNegatifs);
+    fscanf(fichier, "%d", &nbQuestions);
+
+    struct Question q[nbQuestions];
+
+    // 2. Charger les questions depuis le fichier
+    for (i = 0; i < nbQuestions; i++) {
+        fgetc(fichier); // Nettoyer le buffer
+        fgets(q[i].texte, 200, fichier); // Lire la question
+        fscanf(fichier, "%s %s %s %s", q[i].choix[0], q[i].choix[1], q[i].choix[2], q[i].choix[3]);
+        fscanf(fichier, "%d %f", &q[i].reponse_correcte, &q[i].points);
+    }
+    fclose(fichier);
+
+    // 3. Faire le QCM
+    printf("\nNiveau : %d (1:Simple, 2:Inter, 3:Dur)\n", difficulte);
+    
+    for (i = 0; i < nbQuestions; i++) {
+        printf("\nQuestion %d : %s", i + 1, q[i].texte);
+        printf("1) %s  2) %s  3) %s  4) %s\n", q[i].choix[0], q[i].choix[1], q[i].choix[2], q[i].choix[3]);
+        
+        printf("Votre reponse (1-4) : ");
+        scanf("%d", &reponseUser);
+
+        pointsMax += q[i].points;
+
+        if (reponseUser == q[i].reponse_correcte) {
+            printf("Bravo !\n");
+            noteTotale += q[i].points;
+        } else {
+            printf("Faux.\n");
+            if (pointsNegatifs == 1) {
+                noteTotale -= (q[i].points / 2); // Enleve la moitié des points si faux
+            }
+        }
+    }
+
+    // 4. Calcul de la note finale sur 20
+    float noteSur20 = (noteTotale / pointsMax) * 20;
+    if (noteSur20 < 0) noteSur20 = 0;
+
+    printf("\n--- RESULTAT ---\n");
+    printf("Votre note : %.2f / 20\n", noteSur20);
+
+    return 0;
 }

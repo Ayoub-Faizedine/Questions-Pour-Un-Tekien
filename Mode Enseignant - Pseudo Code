@@ -1,4 +1,3 @@
-
 ----------------------- 1) Mot De Passe --------------------------
 
 Fonction VerifierAuthentification() : ENTIER
@@ -8,7 +7,30 @@ Declare 'Saisirutilisateur'
 Declare 'EssaiRestant' = 3
 Declare 'Accès Validé'
 
+Tant Que ( EssaiRestant > 0 
 
-printf("Saisir le mot de passe");
+Affiche("Saisir le mot de passe");
 scanf("%s", SaisirUtilisateur);
-if(SaisirUtilisateur !=
+
+SI (Comparer(SaisirUtilisateur, MotDepasse)== Meme) 
+  Alors Ecrire "Accès Autoriser" = 1;
+
+SINON 
+  Affiche "Erreur, mauvais mot"
+EssaiRestant - 1;
+SI (EssaiRestant > 0) Alors
+Affiche " Il vous reste "Essai restant" essai"
+Fin si
+fin si
+fin tant que
+
+Si (EssaiRestant = 0) Alors
+Afficher "Vous avez trop echouer a taper le mot de passe !";
+exit
+fin si
+
+retourner 'Acces Validé'
+
+FIN
+
+-------------- 2) Création QCM -------------------------------

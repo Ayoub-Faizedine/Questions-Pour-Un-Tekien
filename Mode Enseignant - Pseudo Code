@@ -35,6 +35,18 @@ FIN
 
 -------------- 2) Création QCM -------------------------------
 
+Fonction CréationQCM()
+
+Declare 'Nom QCM'
+Declare 'nbQuestion'
+Declare 'PointNégatif'
+Declare 'f'  (fichier)
+
+
+Afficher (" Quelle est le nom du QCM ? ")
+Scanf("%s", );
+
+
 
 
 

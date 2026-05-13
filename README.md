@@ -49,7 +49,7 @@ l’étudiant.
 - La note donnée doit toujours être sur 20 points et, par
 défaut, chaque question fera le même nombre de points
 
-
+-consulter note
 
 ## Détail
 - Plusieurs Mode

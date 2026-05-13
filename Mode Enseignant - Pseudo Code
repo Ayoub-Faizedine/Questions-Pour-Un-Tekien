@@ -44,7 +44,27 @@ Declare 'f'  (fichier)
 
 
 Afficher (" Quelle est le nom du QCM ? ")
-Scanf("%s", );
+Scanf("%s", nomQCM);
+NomFichier = nomQCM + "txt"
+
+>>>>-------Caractéristique -----------<<<<
+
+
+
+
+
+>>>>>---------------------------------<<<<
+Ouvrir f avec NomFichier avec mode ecriture;
+  Si f NULL alors
+    Afficher (" ERREUR, Impossible creer fichier")
+    retourne
+  fin si
+Ecrire dans f -> ( Caractéristique)
+
+
+Afficher(" Combien de question voulais vous creer ?");
+scanf("%d", nbQuestion);
+ecrire dans f ->  nbQuestion
 
 
 

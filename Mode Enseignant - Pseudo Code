@@ -68,7 +68,20 @@ ecrire dans f ->  nbQuestion
 
 Pour i de 1 à nbQuestion FAIRE
   Afficher("Question n° + i, Saisir l'énoncé")
-  scanf("%s", 
+  scanf("%s")
+  Afficher("Proposition (A, B, C));
+  Scanf("propA, propB, propC)
+  Afficher("Les proposition bonnes")
+  scanf("solution")
+Ecrire dans f -> enonce, propA, propB, propC, solution;
+fin pour;
+
+Fermer 'f';
+Afficher ("Le QCM + nomQCM + à été sauvegarder")
+Fin fonction
+
+---------------------------------------------------------
+
   
 
 

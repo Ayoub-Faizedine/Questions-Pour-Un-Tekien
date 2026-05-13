@@ -66,6 +66,11 @@ Afficher(" Combien de question voulais vous creer ?");
 scanf("%d", nbQuestion);
 ecrire dans f ->  nbQuestion
 
+Pour i de 1 à nbQuestion FAIRE
+  Afficher("Question n° + i, Saisir l'énoncé")
+  scanf("%s", 
+  
+
 
 
 

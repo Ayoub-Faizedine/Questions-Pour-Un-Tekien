@@ -16,6 +16,8 @@ Il propose deux modes :
 ## Mode Enseignant
 -Doit être protégé par un mot de passe
 
+-Nom, prenom, matiere, grade
+
 -création d’un nouveau QCM dont les
 informations devront être sauvegardées dans un fichier pour qu’il
 puisse être réalisé ultérieurement

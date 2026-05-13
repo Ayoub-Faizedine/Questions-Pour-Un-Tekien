@@ -1,1 +1,5 @@
-
+// --- Definition de la fonction Mode Enseignant ---
+void Fonction_Mode_Enseignant() {
+    printf("\n--- MODE ENSEIGNANT ---\n");
+    printf("Bienvenue. Ici vous pouvez gerer les questions.\n");
+}

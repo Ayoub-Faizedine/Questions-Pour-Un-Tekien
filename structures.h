@@ -2,7 +2,7 @@
 #define STRUCTURES_H
 
 #define MAX_TEXT 256
-#define MOT_DE_PASSE "tekien2026" // Protégé par un mot de passe en constante [cite: 763]
+#define MOT_DE_PASSE "tekien2026" // Protégé par un mot de passe 
 
 typedef struct {
     char enonce[MAX_TEXT];

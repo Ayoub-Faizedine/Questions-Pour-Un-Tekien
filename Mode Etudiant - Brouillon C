@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure alignée sur le fichier généré par le professeur
+struct Question {
+    char texte[256];      
+    char choix[4][256];   
+    char reponse_correcte[10]; // String pour gérer "A", "AC", etc.
+};
+
+void LancerModeEtudiant() {
+    char nomFichier[60];
+    int nbQuestions, i;
+    float noteTotale = 0, pointsMax = 0;
+    int ptsNegatifs, reponsesMultiples, modeSequentiel;
+    char reponseUser[10];
+
+    printf("\n=== MODE ETUDIANT ===\n");
+    printf("Entrez le nom du QCM a charger (ex: facile) : ");
+    scanf("%s", nomFichier);
+    strcat(nomFichier, ".txt"); // Ajoute l'extension automatiquement
+
+    FILE *fichier = fopen(nomFichier, "r");
+    if (fichier == NULL) {
+        printf("🚨 Erreur : Fichier introuvable.\n");
+        return; 
+    }
+
+    // 1. LECTURE STRICTE DES PARAMÈTRES (Dans ton ordre exact)
+    fscanf(fichier, "%d %d %d", &ptsNegatifs, &reponsesMultiples, &modeSequentiel);
+    fscanf(fichier, "%d", &nbQuestions);
+
+    struct Question q[nbQuestions];
+
+    // Nettoyage du tampon après le dernier fscanf
+    while (fgetc(fichier) != '\n');
+
+    // 2. LECTURE DES QUESTIONS (Avec fgets pour gérer les espaces)
+    for (i = 0; i < nbQuestions; i++) {
+        fgets(q[i].texte, 256, fichier);
+        q[i].texte[strcspn(q[i].texte, "\n")] = 0;
+
+        fgets(q[i].choix[0], 256, fichier);
+        q[i].choix[0][strcspn(q[i].choix[0], "\n")] = 0;
+
+        fgets(q[i].choix[1], 256, fichier);
+        q[i].choix[1][strcspn(q[i].choix[1], "\n")] = 0;
+
+        fgets(q[i].choix[2], 256, fichier);
+        q[i].choix[2][strcspn(q[i].choix[2], "\n")] = 0;
+
+        fgets(q[i].choix[3], 256, fichier);
+        q[i].choix[3][strcspn(q[i].choix[3], "\n")] = 0;
+
+        fgets(q[i].reponse_correcte, 10, fichier);
+        q[i].reponse_correcte[strcspn(q[i].reponse_correcte, "\n")] = 0;
+    }
+    fclose(fichier); 
+
+    // 3. DÉROULEMENT DU TEST
+    printf("\n--- DÉBUT DU TEST ---\n");
+    
+    for (i = 0; i < nbQuestions; i++) {
+        printf("\nQuestion %d : %s\n", i + 1, q[i].texte);
+        printf("A) %s\nB) %s\nC) %s\nD) %s\n", q[i].choix[0], q[i].choix[1], q[i].choix[2], q[i].choix[3]);
+        
+        // Gestion de l'option séquentielle
+        if (modeSequentiel == 0) {
+            printf("Votre choix (ex: A, AC) ou tapez P pour passer : ");
+        } else {
+            printf("Votre choix obligatoire (ex: A, AC) : ");
+        }
+        
+        scanf("%s", reponseUser);
+
+        // Si l'étudiant décide de passer la question
+        if (modeSequentiel == 0 && strcmp(reponseUser, "P") == 0) {
+            printf(">> Question ignorée.\n");
+            pointsMax += 1; // La question compte dans le total
+            continue; 
+        }
+
+        pointsMax += 1; // On part sur une base de 1 point par question
+
+        // Vérification de la réponse (Comparaison de chaînes)
+        if (strcmp(reponseUser, q[i].reponse_correcte) == 0) {
+            printf(">> Correct !\n");
+            noteTotale += 1;
+        } else {
+            printf(">> Mauvaise réponse. (C'était %s)\n", q[i].reponse_correcte);
+            if (ptsNegatifs == 1) {
+                printf(">> Malus appliqué (-0.5 pt).\n");
+                noteTotale -= 0.5;
+            }
+        }
+    }
+
+    // 4. CALCUL DE LA NOTE (Logique de ton collègue conservée)
+    float noteSur20 = (noteTotale / pointsMax) * 20;
+    if (noteSur20 < 0) noteSur20 = 0;
+
+    printf("\n==============================");
+    printf("\n   NOTE FINALE : %.2f / 20", noteSur20);
+    printf("\n==============================\n");
+}

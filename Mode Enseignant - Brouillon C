@@ -34,7 +34,7 @@ void CreationQCM() {
     printf("\nCombien de questions contient ce QCM ? ");
     scanf("%d", &nbQuestion);
 
-    // ⚠️ ÉTAPE CRITIQUE DE ROBUSTESSE : Nettoyage du tampon clavier
+    // ROBUSTESSE : Nettoyage du tampon clavier
     // Sans ça, le premier "fgets" va sauter à cause de la touche 'Entrée' du scanf précédent.
     while (getchar() != '\n'); 
 

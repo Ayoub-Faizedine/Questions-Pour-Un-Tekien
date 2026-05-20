@@ -9,7 +9,7 @@ Il propose deux modes :
 
 
 ## Participant
-  Ayoub.F et Mohamed MI5 .
+  Ayoub.F et Mohamed MI5 
 
 
 

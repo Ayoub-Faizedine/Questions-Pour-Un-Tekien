@@ -1,2 +1,89 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+void CreationQCM() {
+    char nomQCM[50];
+    char nomFichier[60];
+    int ptsNegatifs, reponsesMultiples, modeSequentiel, nbQuestion, i;
+    FILE *f = NULL;
+
+    // Tampons pour la saisie de texte
+    char enonce[256], propA[256], propB[256], propC[256], propD[256], solution[10];
+
+    printf("\n===================================\n");
+    printf("      CRÉATION D'UN NOUVEAU QCM    \n");
+    printf("===================================\n");
+    
+    // 1. Nom du QCM
+    printf("Entrez le nom du QCM (sans espaces) : ");
+    scanf("%s", nomQCM);
+    sprintf(nomFichier, "%s.txt", nomQCM); // Ajoute automatiquement l'extension .txt
+
+    // 2. Choix des paramètres obligatoires 
+    printf("\n--- PARAMÈTRES DU QCM ---\n");
+    printf("Activer les points négatifs ? (1:Oui / 0:Non) : ");
+    scanf("%d", &ptsNegatifs); // [cite: 217]
+    
+    printf("Autoriser plusieurs réponses vraies ? (1:Oui / 0:Non) : ");
+    scanf("%d", &reponsesMultiples); // 
+    
+    printf("Activer le mode séquentiel (réponse obligatoire) ? (1:Oui / 0:Non) : ");
+    scanf("%d", &modeSequentiel); // 
+
+    printf("\nCombien de questions contient ce QCM ? ");
+    scanf("%d", &nbQuestion);
+
+    // ⚠️ ÉTAPE CRITIQUE DE ROBUSTESSE : Nettoyage du tampon clavier
+    // Sans ça, le premier "fgets" va sauter à cause de la touche 'Entrée' du scanf précédent.
+    while (getchar() != '\n'); 
+
+    // 3. Ouverture du fichier
+    f = fopen(nomFichier, "w");
+    if (f == NULL) {
+        printf("🚨 Erreur : Impossible de créer le fichier %s\n", nomFichier);
+        return; // On quitte proprement si le disque est plein ou bloqué
+    }
+
+    // 4. Écriture de la configuration (Ligne 1 et 2 pour ton collègue)
+    fprintf(f, "%d %d %d\n", ptsNegatifs, reponsesMultiples, modeSequentiel);
+    fprintf(f, "%d\n", nbQuestion);
+
+    // 5. Boucle de saisie des questions
+    for (i = 1; i <= nbQuestion; i++) {
+        printf("\n--- Question %d ---\n", i);
+        
+        printf("Énoncé : ");
+        fgets(enonce, 256, stdin);
+        enonce[strcspn(enonce, "\n")] = 0; // Enlève le 'Entrée' invisible à la fin du mot
+
+        printf("Proposition A : ");
+        fgets(propA, 256, stdin);
+        propA[strcspn(propA, "\n")] = 0;
+
+        printf("Proposition B : ");
+        fgets(propB, 256, stdin);
+        propB[strcspn(propB, "\n")] = 0;
+
+        printf("Proposition C : ");
+        fgets(propC, 256, stdin);
+        propC[strcspn(propC, "\n")] = 0;
+
+        printf("Proposition D : ");
+        fgets(propD, 256, stdin);
+        propD[strcspn(propD, "\n")] = 0;
+
+        printf("Solution attendue (ex: A, ou AC) : ");
+        scanf("%s", solution);
+        
+        // On nettoie à nouveau le tampon pour la boucle suivante
+        while (getchar() != '\n'); 
+
+        // Écriture propre dans le fichier (une ligne par information)
+        fprintf(f, "%s\n%s\n%s\n%s\n%s\n%s\n", enonce, propA, propB, propC, propD, solution);
+    }
+
+    // 6. Fermeture
+    fclose(f);
+    printf("\n✅ Le QCM '%s' a été créé et sauvegardé avec succès !\n", nomQCM);
+}

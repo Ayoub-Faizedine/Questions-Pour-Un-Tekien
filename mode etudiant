@@ -1,105 +1,227 @@
-voici ce qu'a fait mon collegue #include <stdio.h>
+voici ce qu'a fait mon collegue
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include "qcm.h"
 
-/* --- Structure pour organiser les données d'une question --- */
-struct Question {
-    char texte[200];      // L'énoncé de la question
-    char choix[4][100];   // Tableau de 4 chaînes pour les options de réponse
-    int reponse_correcte; // Le numéro de la bonne réponse (1, 2, 3 ou 4)
-    float points;         // Le nombre de points que rapporte cette question
-};
+// Prototypes des fonctions du mode étudiant
+void afficher_liste_qcm();
+QCM* charger_qcm(const char* nom_fichier);
+void lancer_qcm(QCM* qcm);
+void evaluer_qcm(QCM* qcm, int reponses_eleve[MAX_QUESTIONS][MAX_ANSWERS], time_t temps_debut);
 
 int main() {
-    // Déclaration des variables nécessaires
-    char nomFichier[50];
-    int nbQuestions, i, reponseUser;
-    float noteTotale = 0, pointsMax = 0;
-    int modeSequentiel, pointsNegatifs, difficulte;
+    int choix = 0;
+    char nom_fichier[MAX_TEXT];
 
-    printf("=== MODE ETUDIANT ===\n");
-    printf("Entrez le nom du fichier QCM a charger (ex: examen.txt) : ");
-    scanf("%s", nomFichier);
+    printf("=========================================\n");
+    printf("     BIENVENUE DANS QUESTIONS POUR UN TEKIEN\n");
+    printf("                 MODE ETUDIANT           \n");
+    printf("=========================================\n\n");
 
-    // --- Ouverture du fichier en mode lecture ("r") ---
-    FILE *fichier = fopen(nomFichier, "r");
-    if (fichier == NULL) {
-        printf("Erreur : Fichier introuvable. Verifiez le nom.\n");
-        return 1; // Quitte le programme si le fichier n'existe pas
-    }
+    // 1. Affichage des QCM disponibles
+    afficher_liste_qcm();
 
-    /* 
-       1. LECTURE DES PARAMETRES DU QCM 
-       L'enseignant a sauvegardé ces informations en haut du fichier.
-    */
-    // On lit : Difficulté (1-3), Mode Séquentiel (0/1), Points Négatifs (0/1)
-    fscanf(fichier, "%d %d %d", &difficulte, &modeSequentiel, &pointsNegatifs);
-    // On lit le nombre de questions total dans le fichier
-    fscanf(fichier, "%d", &nbQuestions);
+    printf("\nEntrez le nom du fichier du QCM que vous souhaitez passer (ex: math_algebre.dat) : ");
+    scanf("%s", nom_fichier);
 
-    // Création d'un tableau de structures pour stocker toutes les questions
-    struct Question q[nbQuestions];
+    // 2. Chargement du QCM sélectionné
+    QCM* mon_qcm = charger_qcm(nom_fichier);
 
-    /* 
-       2. CHARGEMENT DES QUESTIONS DEPUIS LE FICHIER 
-    */
-    for (i = 0; i < nbQuestions; i++) {
-        fgetc(fichier); // Nettoyage du caractère "entrée" resté dans le buffer
-        
-        // On récupère l'énoncé de la question (toute la ligne)
-        fgets(q[i].texte, 200, fichier); 
-        
-        // On récupère les 4 mots/options possibles
-        fscanf(fichier, "%s %s %s %s", q[i].choix[0], q[i].choix[1], q[i].choix[2], q[i].choix[3]);
-        
-        // On récupère l'indice de la bonne réponse et les points attribués
-        fscanf(fichier, "%d %f", &q[i].reponse_correcte, &q[i].points);
-    }
-    fclose(fichier); // Fermeture du fichier car tout est chargé en mémoire
+    if (mon_qcm != NULL) {
+        // 3. Lancement de l'examen
+        lancer_qcm(mon_qcm);
+        free(mon_qcm); // Libération de la mémoire
+    } else {
+        printf("\n[Erreur] Impossible de charger le QCM. Verifiez le nom du fichier.\n");
+    }
 
-    /* 
-       3. DEROULEMENT DU TEST 
-    */
-    printf("\n--- DEBUT DU TEST (Niveau: %d) ---\n", difficulte);
-    
-    for (i = 0; i < nbQuestions; i++) {
-        // Affichage de la question et des options
-        printf("\nQuestion %d : %s", i + 1, q[i].texte);
-        printf("1) %s\n2) %s\n3) %s\n4) %s\n", q[i].choix[0], q[i].choix[1], q[i].choix[2], q[i].choix[3]);
-        
-        // Demande de la réponse à l'étudiant
-        printf("Votre choix (1-4) : ");
-        scanf("%d", &reponseUser);
+    return 0;
+}
 
-        // Cumul des points maximums possibles pour le calcul final
-        pointsMax += q[i].points;
+/**
+ * Simule l'affichage des QCM disponibles dans le répertoire
+ * (Dans un vrai projet, on utiliserait <dirent.h> pour lister les fichiers du dossier)
+ */
+void afficher_liste_qcm() {
+    printf("--- Liste des QCM Disponibles ---\n");
+    printf("[Categorie: Mathematiques] -> math_algebre.dat\n");
+    printf("[Categorie: Informatique]  -> c_avance.dat\n");
+    printf("[Categorie: Reseau]        -> reseau_ccna.dat\n");
+    printf("---------------------------------\n");
+}
 
-        // --- Vérification de la réponse ---
-        if (reponseUser == q[i].reponse_correcte) {
-            printf(">> Correct !\n");
-            noteTotale += q[i].points; // Ajout des points
-        } else {
-            printf(">> Mauvaise reponse.\n");
-            // Si l'enseignant a activé les points négatifs
-            if (pointsNegatifs == 1) {
-                printf("Malus applique.\n");
-                noteTotale -= (q[i].points * 0.5); // On retire 50% de la valeur de la question
-            }
-        }
-    }
+/**
+ * Charge un QCM depuis un fichier binaire sauvegardé par le mode Enseignant
+ */
+QCM* charger_qcm(const char* nom_fichier) {
+    FILE* fichier = fopen(nom_fichier, "rb");
+    if (fichier == NULL) {
+        return NULL;
+    }
 
-    /* 
-       4. CALCUL ET AFFICHAGE DE LA NOTE FINALE 
-    */
-    // Règle de trois : (Points obtenus / Points Max) * 20
-    float noteSur20 = (noteTotale / pointsMax) * 20;
-    
-    // Sécurité pour ne pas avoir de note en dessous de zéro à cause des malus
-    if (noteSur20 < 0) noteSur20 = 0;
+    QCM* qcm = malloc(sizeof(QCM));
+    if (qcm == NULL) {
+        fclose(fichier);
+        return NULL;
+    }
 
-    printf("\n==============================");
-    printf("\n   NOTE FINALE : %.2f / 20", noteSur20);
-    printf("\n==============================\n");
+    // Lecture de l'intégralité de la structure QCM depuis le fichier
+    fread(qcm, sizeof(QCM), 1, fichier);
+    fclose(fichier);
+    return qcm;
+}
 
-    return 0;
+/**
+ * Gère le déroulement de l'examen et la navigation entre les questions
+ */
+void lancer_qcm(QCM* qcm) {
+    // Tableau pour stocker les réponses de l'étudiant 
+    // reponses_eleve[i][j] = 1 si l'élève a coché la réponse j de la question i, sinon 0
+    int reponses_eleve[MAX_QUESTIONS][MAX_ANSWERS] = {0};
+    int question_actuelle = 0;
+    char navigation;
+    
+    // Enregistrement de l'heure de début pour la limite de temps
+    time_t temps_debut = time(NULL);
+
+    printf("\n>>> Debut du QCM : %s (Matiere : %s) <<<\n", qcm->nom, qcm->matiere);
+    if (qcm->limite_temps > 0) {
+        printf("[ATTENTION] Vous avez une limite de temps de %d secondes pour ce QCM.\n", qcm->limite_temps);
+    }
+    printf("Regles : Entrez le numero de la reponse pour la cocher/decocher.\n");
+    printf("Navigation : 'P' pour Précédent, 'S' pour Suivant, 'T' pour Terminer et valider.\n\n");
+
+    while (question_actuelle < qcm->nb_questions) {
+        // Vérification du temps écoulé
+        if (qcm->limite_temps > 0) {
+            time_t temps_actuel = time(NULL);
+            if (difftime(temps_actuel, temps_debut) > qcm->limite_temps) {
+                printf("\n[TEMPS ECOULE !] Le temps imparti est depasse. Correction automatique.\n");
+                break; 
+            }
+        }
+
+        Question q = qcm->questions[question_actuelle];
+        printf("\n--- Question %d/%d (%.2f pts) ---\n", question_actuelle + 1, qcm->nb_questions, q.points);
+        printf("%s\n", q.enonce);
+
+        // Affichage des choix possibles
+        for (int i = 0; i < q.nb_reponses; i++) {
+            // Affiche [X] si coché, [ ] sinon
+            char coche = reponses_eleve[question_actuelle][i] ? 'X' : ' ';
+            printf("  %d. [%c] %s\n", i + 1, coche, q.reponses[i].texte);
+        }
+
+        // Menu d'action dynamique
+        printf("\nVotre action (Chiffre pour cocher | 'S'=Suivant | 'P'=Precedent | 'T'=Terminer) : ");
+        scanf(" %c", &navigation);
+
+        if (navigation >= '1' && navigation <= '9') {
+            int choix_reponse = navigation - '1'; // Conversion char vers index int
+            if (choix_reponse < q.nb_reponses) {
+                if (qcm->reponses_multiples) {
+                    // Mode réponses multiples : on inverse l'état (on coche/décoche)
+                    reponses_eleve[question_actuelle][choix_reponse] = !reponses_eleve[question_actuelle][choix_reponse];
+                } else {
+                    // Mode réponse unique : on décoche tout et on coche la nouvelle
+                    for (int i = 0; i < q.nb_reponses; i++) reponses_eleve[question_actuelle][i] = 0;
+                    reponses_eleve[question_actuelle][choix_reponse] = 1;
+                }
+            }
+        } 
+        else if (navigation == 'S' || navigation == 's') {
+            // Vérification du mode séquentiel : a-t-il répondu à au moins une option ?
+            int a_repondu = 0;
+            for (int i = 0; i < q.nb_reponses; i++) {
+                if (reponses_eleve[question_actuelle][i] == 1) a_repondu = 1;
+            }
+
+            if (qcm->mode_sequentiel && !a_repondu) {
+                printf("[Bloque] Le mode sequentiel est actif. Vous devez repondre avant de passer.\n");
+            } else {
+                question_actuelle++;
+            }
+        } 
+        else if (navigation == 'P' || navigation == 'p') {
+            // Autoriser le retour en arrière uniquement si le mode séquentiel ne l'interdit pas
+            if (qcm->mode_sequentiel) {
+                printf("[Bloque] Mode sequentiel actif. Retour en arriere impossible.\n");
+            } else if (question_actuelle > 0) {
+                question_actuelle--;
+            } else {
+                printf("Vous etes deja a la premiere question.\n");
+            }
+        } 
+        else if (navigation == 'T' || navigation == 't') {
+            // L'étudiant décide de terminer le QCM avant la fin des questions
+            char confirmation;
+            printf("Etes-vous sur de vouloir terminer et soumettre vos reponses ? (O/N) : ");
+            scanf(" %c", &confirmation);
+            if (confirmation == 'O' || confirmation == 'o') {
+                break;
+            }
+        }
+    }
+
+    // 4. Évaluation et calcul de la note finale
+    evaluer_qcm(qcm, reponses_eleve, temps_debut);
+}
+
+/**
+ * Compare les réponses, applique le barème (points négatifs) et ramène la note sur 20.
+ */
+void evaluer_qcm(QCM* qcm, int reponses_eleve[MAX_QUESTIONS][MAX_ANSWERS], time_t temps_debut) {
+    float total_points_eleve = 0.0;
+    float total_points_qcm = 0.0;
+
+    printf("\n=========================================\n");
+    printf("             CORRECTION & RÉSULTATS      \n");
+    printf("=========================================\n");
+
+    for (int i = 0; i < qcm->nb_questions; i++) {
+        Question q = qcm->questions[i];
+        total_points_qcm += q.points;
+        int question_sans_faute = 1;
+        int aucune_case_cochee = 1;
+
+        for (int j = 0; j < q.nb_reponses; j++) {
+            if (reponses_eleve[i][j] == 1) aucune_case_cochee = 0;
+
+            // Si l'élève s'est trompé (a coché une fausse ou n'a pas coché une vraie)
+            if (reponses_eleve[i][j] != q.reponses[j].est_correcte) {
+                question_sans_faute = 0;
+            }
+        }
+
+        if (question_sans_faute) {
+            // La question est parfaitement juste
+            total_points_eleve += q.points;
+            printf("Question %d : Juste (+%.2f pts)\n", i + 1, q.points);
+        } else {
+            // Gestion des points négatifs si paramétré par l'enseignant
+            if (qcm->points_negatifs && !aucune_case_cochee) {
+                // On retire la moitié de la valeur de la question par exemple
+                float penalite = q.points / 2.0;
+                total_points_eleve -= penalite;
+                printf("Question %d : Fausse (-%.2f pts de penalite)\n", i + 1, penalite);
+            } else {
+                printf("Question %d : Fausse ou non repondue (0.00 pt)\n", i + 1);
+            }
+        }
+    }
+
+    // Sécurité pour éviter les notes globales négatives
+    if (total_points_eleve < 0) total_points_eleve = 0;
+
+    // Calcul de la note finale ramenée sur 20 points (Règle de trois)
+    float note_sur_20 = (total_points_eleve / total_points_qcm) * 20.0;
+    time_t temps_fin = time(NULL);
+
+    printf("\n-----------------------------------------\n");
+    printf("Duree de l'epreuve : %.0f secondes\n", difftime(temps_fin, temps_debut));
+    printf("Points obtenus     : %.2f / %.2f\n", total_points_eleve, total_points_qcm);
+    printf("NOTE FINALE        : ** %.2f / 20 **\n", note_sur_20);
+    printf("=========================================\n");
 }

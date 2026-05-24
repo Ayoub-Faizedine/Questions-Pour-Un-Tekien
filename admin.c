@@ -18,7 +18,7 @@ void LancerModeEnseignant() {
 
         if (strcmp(mdpSaisi, MOT_DE_PASSE) == 0) {
             printf(">> Acces Autorise.\n");
-            // Nettoyage du tampon après le scanf
+            // Nettoyage 
             while (getchar() != '\n'); 
             break; // Sort de la boucle des mots de passe
         } else {
@@ -56,7 +56,7 @@ void LancerModeEnseignant() {
     printf("Combien de questions contient ce QCM ? ");
     scanf("%d", &nbQuestion);
 
-    // ROBUSTESSE : On vide le tampon avant d'utiliser fgets
+    // Nettoyage
     while (getchar() != '\n'); 
 
     f = fopen(nomFichier, "w");
@@ -95,7 +95,7 @@ void LancerModeEnseignant() {
         printf("Solution attendue (ex: A, ou AC) : ");
         scanf("%s", solution);
         
-        while (getchar() != '\n'); // Nettoyage pour la boucle suivante
+        while (getchar() != '\n'); // Nettoyage 
 
         fprintf(f, "%s\n%s\n%s\n%s\n%s\n%s\n", enonce, propA, propB, propC, propD, solution);
     }

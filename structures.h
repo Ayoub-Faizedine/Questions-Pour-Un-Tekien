@@ -10,7 +10,7 @@ typedef struct {
     char optB[MAX_TEXT];
     char optC[MAX_TEXT];
     char optD[MAX_TEXT];
-    char reponseCorrecte;
+    char reponseCorrecte[10]; // Modifié ici pour gérer "AB", "ACD", etc.
 } Question;
 
 #endif

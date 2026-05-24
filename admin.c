@@ -39,22 +39,46 @@ void LancerModeEnseignant() {
 
     char enonce[MAX_TEXT], propA[MAX_TEXT], propB[MAX_TEXT], propC[MAX_TEXT], propD[MAX_TEXT], solution[10];
 
-    printf("\n--- CREATION D'UN NOUVEAU QCM ---\n");
+   printf("\n--- CREATION D'UN NOUVEAU QCM ---\n");
     printf("Entrez le nom du QCM (sans espaces) : ");
     scanf("%s", nomQCM);
     sprintf(nomFichier, "%s.txt", nomQCM);
 
-    printf("Activer les points negatifs ? (1:Oui / 0:Non) : ");
-    scanf("%d", &ptsNegatifs);
-    
-    printf("Autoriser plusieurs reponses vraies ? (1:Oui / 0:Non) : ");
-    scanf("%d", &reponsesMultiples);
-    
-    printf("Activer le mode sequentiel ? (1:Oui / 0:Non) : ");
-    scanf("%d", &modeSequentiel);
+    // points negatifs
+    do {
+        printf("Activer les points negatifs ? (1:Oui / 0:Non) : ");
+        if (scanf("%d", &ptsNegatifs) != 1) {
+            while (getchar() != '\n'); // Vide le tampon
+            ptsNegatifs = -1; // Force le redémarrage de la boucle
+        }
+    } while (ptsNegatifs != 0 && ptsNegatifs != 1);
 
-    printf("Combien de questions contient ce QCM ? ");
-    scanf("%d", &nbQuestion);
+    // réponses multiples
+    do {
+        printf("Autoriser plusieurs reponses vraies ? (1:Oui / 0:Non) : ");
+        if (scanf("%d", &reponsesMultiples) != 1) {
+            while (getchar() != '\n');
+            reponsesMultiples = -1;
+        }
+    } while (reponsesMultiples != 0 && reponsesMultiples != 1);
+
+    // mode séquentiel
+    do {
+        printf("Activer le mode sequentiel ? (1:Oui / 0:Non) : ");
+        if (scanf("%d", &modeSequentiel) != 1) {
+            while (getchar() != '\n');
+            modeSequentiel = -1;
+        }
+    } while (modeSequentiel != 0 && modeSequentiel != 1);
+
+    // Sécurité 
+    do {
+        printf("Combien de questions contient ce QCM ? ");
+        if (scanf("%d", &nbQuestion) != 1 || nbQuestion <= 0) {
+            while (getchar() != '\n');
+            nbQuestion = 0;
+        }
+    } while (nbQuestion <= 0);
 
     // Nettoyage
     while (getchar() != '\n'); 

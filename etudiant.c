@@ -24,20 +24,20 @@ void LancerModeEtudiant() {
         return; 
     }
 
-    // 1. LECTURE DES PARAMÈTRES (Dans l'ordre exact de ta fonction CreationQCM)
+    // 1. LECTURE DES PARAMÈTRES
     fscanf(fichier, "%d %d %d", &ptsNegatifs, &reponsesMultiples, &modeSequentiel);
     fscanf(fichier, "%d", &nbQuestions);
 
-    // Création du tableau de questions basé sur structures.h
+    // Création du tableau de questions
     Question q[nbQuestions];
 
-    // Nettoyage du tampon après fscanf pour ne pas faire bugger les fgets
+    // Nettoyage 
     while (fgetc(fichier) != '\n');
 
     // 2. CHARGEMENT DES QUESTIONS
     for (i = 0; i < nbQuestions; i++) {
         fgets(q[i].enonce, MAX_TEXT, fichier);
-        q[i].enonce[strcspn(q[i].enonce, "\n")] = 0; // Nettoie le \n invisible
+        q[i].enonce[strcspn(q[i].enonce, "\n")] = 0; // Nettoie 
 
         fgets(q[i].optA, MAX_TEXT, fichier);
         q[i].optA[strcspn(q[i].optA, "\n")] = 0;
@@ -62,7 +62,7 @@ void LancerModeEtudiant() {
         printf("\nQuestion %d : %s\n", i + 1, q[i].enonce);
         printf("A) %s\nB) %s\nC) %s\nD) %s\n", q[i].optA, q[i].optB, q[i].optC, q[i].optD);
         
-        // Adaptation de la consigne selon le mode séquentiel
+        // Adaptation 
         if (modeSequentiel == 0) {
             printf("Votre choix (ex: A, AC) ou tapez P pour passer : ");
         } else {
@@ -80,7 +80,7 @@ void LancerModeEtudiant() {
 
         pointsMax += 1; // 1 point de base par question
 
-        // Vérification de la réponse (Comparaison des chaînes pour gérer les réponses multiples)
+        // Vérification de la réponse 
         if (strcmp(reponseUser, q[i].reponseCorrecte) == 0) {
             printf(">> Correct !\n");
             noteTotale += 1;
@@ -99,7 +99,7 @@ void LancerModeEtudiant() {
         noteSur20 = (noteTotale / pointsMax) * 20.0;
     }
     
-    // Sécurité : la note finale ne peut pas être inférieure à 0
+    // Sécurité 
     if (noteSur20 < 0) {
         noteSur20 = 0;
     }

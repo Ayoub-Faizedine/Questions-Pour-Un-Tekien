@@ -19,8 +19,8 @@ int main() {
         printf("Votre Choix : ");
         
         if (scanf("%d", &choix) != 1) {
-            printf("⚠️ Erreur : veuillez saisir un nombre valide.\n");
-            while (getchar() != '\n'); // Purge du tampon [cite: 490]
+            printf(" Erreur : veuillez saisir un nombre valide.\n");
+            while (getchar() != '\n'); // nettoyage
             continue;
         }
             
@@ -35,7 +35,7 @@ int main() {
                 printf("Fermeture de l'application. À bientôt !\n");
                 break;
             default:
-                printf("⚠️ Erreur : Choix invalide (entrez 1, 2 ou 3).\n");
+                printf("Erreur : Choix invalide (entrez 1, 2 ou 3).\n");
                 break;
         }
     } while (choix != 3);

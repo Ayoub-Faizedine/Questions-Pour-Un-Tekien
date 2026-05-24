@@ -1,28 +1,19 @@
-# Variables de compilation
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
-# Nom de ton exécutable final
 EXEC = tekien
-
-# Liste de tes fichiers sources (à adapter selon tes noms de fichiers)
-SRC = main.c authentification.c admin.c etudiant.c
+SRC = main.c admin.c etudiant.c
 OBJ = $(SRC:.c=.o)
 
-# Règle principale
 all: $(EXEC)
 
-# Création de l'exécutable
 $(EXEC): $(OBJ)
-        $(CC) -o $@ $^
+->$(CC) -o $@ $^
 
-# Création des fichiers objets (.o)
 %.o: %.c
-        $(CC) $(CFLAGS) -c $<
+->$(CC) $(CFLAGS) -c $<
 
-# Nettoyage des fichiers temporaires
 clean:
-        rm -rf *.o
+->rm -rf *.o
 
-# Nettoyage complet
 mrproper: clean
-        rm -rf $(EXEC)
+->rm -rf $(EXEC)

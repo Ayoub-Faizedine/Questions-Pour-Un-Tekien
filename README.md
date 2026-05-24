@@ -1,68 +1,53 @@
-# Questions-Pour-Un-Tekien
+# Projet C - Questions pour un Tekien
 
-##  Description
-"Questions pour un Tekien" est un gestionnaire de QCM interactif développé en langage C. 
-Il propose deux modes :
-- **Mode Enseignant** : Création, paramétrage (points négatifs, réponses multiples) et sauvegarde de QCM dans des fichiers.
-- **Mode Étudiant** : Passage des QCM avec évaluation et notation automatique sur 20.
+**Auteurs :** Ayoub & Mohamed MI5
+**Niveau :** Cycle PreING1
 
+---
 
+## Description du Projet
+"Questions pour un Tekien" est un gestionnaire de QCM interactif code en C. Le programme est divise en deux espaces securises permettant de separer la creation des examens (par le professeur) et leur passage (par les etudiants). Toutes les donnees sont gerees dynamiquement via des fichiers textes `.txt`.
 
-## Participant
-  Ayoub.F et Mohamed MI5 
+## Fonctionnalites et Robustesse
 
+Nous avons accorde une attention particuliere a la **securite des saisies** pour eviter tout crash du programme :
 
+- **Securite Anti-Boucle Infinie :** Utilisation systematique de la purge du tampon clavier (`while (getchar() != '\n')`) pour gerer les cas ou un utilisateur tape des lettres au lieu de chiffres.
+- **Insensibilite a la casse :** Les reponses des etudiants (a, b, ac...) sont manuellement converties en majuscules via la table ASCII (soustraction de 32), sans utiliser de bibliotheques externes, pour garantir une correction sans faille.
+- **Controles stricts :** Les parametres de creation du QCM (0 ou 1) sont proteges par des boucles `do-while` bloquantes.
 
-## Mode Enseignant
--Doit être protégé par un mot de passe
+### Mode Enseignant (Securise)
+- Protege par le mot de passe administrateur : `tekien2026`.
+- Configuration du QCM : Points negatifs (malus), reponses multiples, et mode sequentiel.
+- Generation automatique du fichier de configuration `.txt`.
 
--Nom, prenom, matiere, grade
+### Mode Etudiant
+- Chargement dynamique de n'importe quel QCM cree.
+- Application du bareme en temps reel et affichage de la note sur 20.
+- Gestion du saut de question (touche 'P') si le mode sequentiel est desactive.
 
--création d’un nouveau QCM dont les
-informations devront être sauvegardées dans un fichier pour qu’il
-puisse être réalisé ultérieurement
+---
 
--QCM doit avoir un nom pour pouvoir être identifiable.
+## Architecture des Fichiers
 
--paramètres qui seront choisis par l’enseignant : 
-      la possibilité de mettre des points négatifs si une réponse
-      fausse est choisie.
-       la possibilité d’avoir plusieurs réponses vraies par question
-       l’obligation ou non de devoir répondre à une question avant
-      de passer à la suivante (mode séquentiel).
-       Ces paramètres seront valables pour l’ensemble du QCM et
-      non pas par question.
-      Indiquer le nombre de question et le nombre de reponses possible par exemple
+- `main.c` : Point d'entree, prototypes des fonctions et menu principal.
+- `admin.c` : Logique de creation de fichiers et d'authentification.
+- `etudiant.c` : Logique de lecture, de deroulement du test et de notation.
+- `structures.h` : Fichier d'en-tete commun contenant la structure `Question`.
+- `Makefile` : Script de compilation automatisee (norme C99).
+- `Math.txt`, `math2.txt`, `math3.txt` : Fichiers de tests generes par notre programme montrant differentes configurations.
 
+---
 
-## Mode Étudiant
+## Compilation et Execution (Linux / WSL)
 
--Effectuer les QCM qui auront été créés
-précédemment et enregistrés dans des fichiers.
--mode est choisi, la liste des QCM disponibles doit être
-affichée et l’étudiant peut alors indiquer quel QCM il ‘souhaite’ faire
+Placez-vous dans le repertoire du projet depuis un terminal.
 
--Lorsque le QCM est fini, le programme doit comparer les réponses de
-l’étudiant avec les réponses attendues, calculer la note, et la fournir à
-l’étudiant.
+**1. Compiler le projet :**
+make
 
-- La note donnée doit toujours être sur 20 points et, par
-défaut, chaque question fera le même nombre de points
+**2. Lancer l'application :**
+./tekien
 
--consulter note
-
-## Détail
-- Plusieurs Mode
-- Limite de Temps
-- Ranger les QCM par catégories.
-- Possibilité d’indiquer le nombre de points que vaut une question.
-- Ajouter une interface graphique et/ou des appuis clavier dynamiques
--Possibilité de revenir sur une question précédente lorsqu’on passe
-un QCM
-- Vous pouvez implémenter d’autres améliorations de votre choix
-- Votre code sera généreusement commenté
-
-
-
-
-
+**3. Nettoyer les fichiers compiles (.o) :**
+make clean

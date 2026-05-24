@@ -39,7 +39,7 @@ void LancerModeEnseignant() {
 
     char enonce[MAX_TEXT], propA[MAX_TEXT], propB[MAX_TEXT], propC[MAX_TEXT], propD[MAX_TEXT], solution[10];
 
-   printf("\n--- CREATION D'UN NOUVEAU QCM ---\n");
+    printf("\n--- CREATION D'UN NOUVEAU QCM ---\n");
     printf("Entrez le nom du QCM (sans espaces) : ");
     scanf("%s", nomQCM);
     sprintf(nomFichier, "%s.txt", nomQCM);
@@ -118,6 +118,14 @@ void LancerModeEnseignant() {
 
         printf("Solution attendue (ex: A, ou AC) : ");
         scanf("%s", solution);
+        
+        // --- Conversion manuelle en majuscules ---
+        int k;
+        for(k = 0; solution[k] != '\0'; k++) {
+            if (solution[k] >= 'a' && solution[k] <= 'z') {
+                solution[k] = solution[k] - 32;
+            }
+        }
         
         while (getchar() != '\n'); // Nettoyage 
 

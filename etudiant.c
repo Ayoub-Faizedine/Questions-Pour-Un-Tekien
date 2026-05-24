@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "structures.h" // On appelle votre fichier commun
+#include "fonctions.h" // A ajouter si tu as le fichier fonctions.h
 
 void LancerModeEtudiant() {
     char nomFichier[60];
@@ -71,8 +72,18 @@ void LancerModeEtudiant() {
         
         scanf("%s", reponseUser);
 
+        // --- MODIFICATION : Conversion manuelle en majuscules ---
+        int k;
+        for(k = 0; reponseUser[k] != '\0'; k++) {
+            if (reponseUser[k] >= 'a' && reponseUser[k] <= 'z') {
+                reponseUser[k] = reponseUser[k] - 32;
+            }
+        }
+        // -------------------------------------------------------
+
         // Si le mode séquentiel est désactivé et que l'étudiant passe
-        if (modeSequentiel == 0 && (strcmp(reponseUser, "P") == 0 || strcmp(reponseUser, "p") == 0)) {
+        // Note: La réponse est maintenant forcément en majuscule, "P" suffit.
+        if (modeSequentiel == 0 && strcmp(reponseUser, "P") == 0) {
             printf(">> Question ignorée.\n");
             pointsMax += 1;
             continue; 

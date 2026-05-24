@@ -1,6 +1,15 @@
-Questions-Pour-Un-Tekien:
+## Organisation et Methodologie
 
-Lors de ce projet, nous nous sommes répartie les taches en faisant chacun une fonction ( Fonction enseignant pour Ayoub et Fonction étudiant pour Mohammed)
-Le Menu a été fait ensemble. De plus, nous nous sommes mis d'accord sur les condition obligatoire un qcm et sur les options à mettre celon le désir de enseignant.
-Lorsque l'un avait des difficultés, l'autre était pour aider, et des correction des pseudo-code et brouillon c etait réaaliser chacun a l'autre pour mieux voir les erreurs.
-On a décider de faire des speudo-code puis des brouillon c afin de mener a bien le projet.
+Pour la realisation de ce projet, nous avons opte pour une repartition des taches claire et efficace : 
+- Ayoub s'est charge du developpement du Mode Enseignant.
+- Mohamed a programme le Mode Etudiant.
+- Le menu principal et l'architecture globale ont ete concus de maniere collaborative.
+
+En amont du code, nous nous sommes concertes pour definir le cahier des charges, notamment les conditions obligatoires d'un QCM et les differentes options parametrables par l'enseignant (malus, mode sequentiel, etc.).
+
+Notre methodologie a repose sur une entraide constante. Nous avons procede par etapes :
+1. Redaction des pseudo-codes pour structurer notre logique.
+2. Developpement des premieres versions (brouillons) en C.
+3. Relecture croisee de nos codes respectifs. 
+
+Cette approche collaborative nous a permis de nous debloquer mutuellement en cas de difficulte et d'identifier beaucoup plus efficacement les erreurs avant la fusion finale du projet.

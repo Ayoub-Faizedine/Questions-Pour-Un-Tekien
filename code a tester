@@ -1,1 +1,336 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
+#define MAX_TEXT 256
+#define MAX_Q 50
+#define PASSWORD_ADMIN "amine" // Mot de passe demandé : amine
+
+typedef struct {
+    char enonce[MAX_TEXT];
+    char props[4][MAX_TEXT];
+    char solution[10];
+} Question;
+
+// --- Sécurité : Vidage du tampon clavier ---
+void vider_tampon() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+// --- Générateur automatique des 3 QCM exemples sur le football ---
+void generer_exemples_football() {
+    FILE* f;
+    
+    // 1. Coupe du Monde
+    if (!(f = fopen("foot_mondial.txt", "r"))) {
+        f = fopen("foot_mondial.txt", "w");
+        if (f) {
+            fprintf(f, "0 0 0\n3\n"); // Pas malus, pas multiple, pas séquentiel
+            fprintf(f, "Qui a gagne la Coupe du Monde 2022 ?\nArgentine\nFrance\nBresil\nMaroc\nA\n");
+            fprintf(f, "Quel pays a le plus de Coupes du Monde ?\nAllemagne\nItalie\nBresil\nArgentine\nC\n");
+            fprintf(f, "En quelle annee la France a-t-elle gagne sa premiere etoile ?\n1986\n1998\n2006\n2018\nB\n");
+            fclose(f);
+        }
+    }
+
+    // 2. Ligue des Champions (Séquentiel actif)
+    if (!(f = fopen("foot_cl.txt", "r"))) {
+        f = fopen("foot_cl.txt", "w");
+        if (f) {
+            fprintf(f, "0 0 1\n3\n"); // Mode séquentiel
+            fprintf(f, "Quel club a remporte le plus de Ligues des Champions ?\nFC Barcelone\nAC Milan\nReal Madrid\nBayern Munich\nC\n");
+            fprintf(f, "Qui est le meilleur buteur de l'histoire de la competition ?\nLionel Messi\nCristiano Ronaldo\nRobert Lewandowski\nKarim Benzema\nB\n");
+            fprintf(f, "Quel club francais a gagne la C1 en 1993 ?\nPSG\nOM\nLyon\nAS Monaco\nB\n");
+            fclose(f);
+        }
+    }
+
+    // 3. Récompenses & Ballons d'Or (Points négatifs et réponses multiples)
+    if (!(f = fopen("foot_recompenses.txt", "r"))) {
+        f = fopen("foot_recompenses.txt", "w");
+        if (f) {
+            fprintf(f, "1 1 0\n3\n"); // Points négatifs et réponses multiples
+            fprintf(f, "Qui detient le record du nombre de Ballons d'Or ?\nCristiano Ronaldo\nJohan Cruyff\nLionel Messi\nZinedine Zidane\nC\n");
+            fprintf(f, "Quel joueur francais a remporte le Ballon d'Or en 2022 ?\nKarim Benzema\nKylian Mbappe\nAntoine Griezmann\nOlivier Giroud\nA\n");
+            fprintf(f, "Quels selectionneurs francais ont gagne la Coupe du Monde ?\nZinedine Zidane\nAime Jacquet\nDidier Deschamps\nLaurent Blanc\nBC\n");
+            fclose(f);
+        }
+    }
+}
+
+// --- Historique : Enregistrement des notes des étudiants ---
+void sauvegarder_note(const char* nomQCM, float note) {
+    FILE* f = fopen("notes_etudiants.txt", "a");
+    if (f) {
+        time_t maintenant = time(NULL);
+        char* date_str = ctime(&maintenant);
+        date_str[strcspn(date_str, "\n")] = 0; // Nettoie le saut de ligne de ctime
+        
+        fprintf(f, "Examen : %s | Note : %.2f/20 | Date : %s\n", nomQCM, note, date_str);
+        fclose(f);
+    }
+}
+
+// --- Historique : Consultation des notes ---
+void Consulter_Notes() {
+    FILE* f = fopen("notes_etudiants.txt", "r");
+    char ligne[256];
+
+    printf("\n=========================================\n");
+    printf("          HISTORIQUE DES NOTES           \n");
+    printf("=========================================\n");
+
+    if (!f) {
+        printf("Aucune note enregistree pour le moment.\n");
+        return;
+    }
+
+    while (fgets(ligne, sizeof(ligne), f)) {
+        printf("%s", ligne);
+    }
+    fclose(f);
+}
+
+// --- Mode Enseignant ---
+void Mode_Enseignant() {
+    char password[50];
+    printf("\n--- ACCES SECURISE ENSEIGNANT ---\n");
+    printf("Mot de passe admin : ");
+    fgets(password, sizeof(password), stdin);
+    password[strcspn(password, "\n")] = 0;
+
+    if (strcmp(password, PASSWORD_ADMIN) != 0) {
+        printf("🚨 Mot de passe incorrect ! Acces refuse.\n");
+        return;
+    }
+
+    char nomQCM[50], nomFichier[60], buffer[MAX_TEXT], sol[10];
+    int ptsNeg, repMult, modeSeq, nbQ;
+
+    printf("\n--- CRÉATION D'UN NOUVEAU QCM ---\n");
+    printf("Entrez le nom du QCM (sans espaces, ex: math1) : ");
+    scanf("%49s", nomQCM);
+    sprintf(nomFichier, "%s.txt", nomQCM);
+    vider_tampon();
+
+    // Contrôles stricts par boucles do-while bloquantes
+    do {
+        printf("Activer les points negatifs ? (1:Oui / 0:Non) : ");
+        if (scanf("%d", &ptsNeg) != 1) ptsNeg = -1;
+        vider_tampon();
+    } while (ptsNeg != 0 && ptsNeg != 1);
+
+    do {
+        printf("Autoriser les reponses multiples ? (1:Oui / 0:Non) : ");
+        if (scanf("%d", &repMult) != 1) repMult = -1;
+        vider_tampon();
+    } while (repMult != 0 && repMult != 1);
+
+    do {
+        printf("Activer le mode sequentiel (bloquant) ? (1:Oui / 0:Non) : ");
+        if (scanf("%d", &modeSeq) != 1) modeSeq = -1;
+        vider_tampon();
+    } while (modeSeq != 0 && modeSeq != 1);
+
+    do {
+        printf("Nombre de questions (1 a %d) : ", MAX_Q);
+        if (scanf("%d", &nbQ) != 1) nbQ = -1;
+        vider_tampon();
+    } while (nbQ < 1 || nbQ > MAX_Q);
+
+    FILE *f = fopen(nomFichier, "w");
+    if (!f) {
+        printf("🚨 Erreur : Impossible de creer le fichier.\n");
+        return;
+    }
+
+    fprintf(f, "%d %d %d\n%d\n", ptsNeg, repMult, modeSeq, nbQ);
+
+    for (int i = 1; i <= nbQ; i++) {
+        printf("\n--- Question %d ---\nEnonce : ", i);
+        fgets(buffer, MAX_TEXT, stdin); buffer[strcspn(buffer, "\n")] = 0;
+        fprintf(f, "%s\n", buffer);
+
+        printf("Proposition A : "); fgets(buffer, MAX_TEXT, stdin); buffer[strcspn(buffer, "\n")] = 0; fprintf(f, "%s\n", buffer);
+        printf("Proposition B : "); fgets(buffer, MAX_TEXT, stdin); buffer[strcspn(buffer, "\n")] = 0; fprintf(f, "%s\n", buffer);
+        printf("Proposition C : "); fgets(buffer, MAX_TEXT, stdin); buffer[strcspn(buffer, "\n")] = 0; fprintf(f, "%s\n", buffer);
+        printf("Proposition D : "); fgets(buffer, MAX_TEXT, stdin); buffer[strcspn(buffer, "\n")] = 0; fprintf(f, "%s\n", buffer);
+
+        printf("Solution attendue (ex: A, ou AC) : ");
+        scanf("%9s", sol); vider_tampon();
+        
+        // Conversion manuelle en majuscules via la table ASCII
+        for (int s = 0; sol[s] != '\0'; s++) {
+            if (sol[s] >= 'a' && sol[s] <= 'z') {
+                sol[s] -= 32;
+            }
+        }
+        fprintf(f, "%s\n", sol);
+    }
+    fclose(f);
+    printf("\n✅ Le QCM '%s' a ete genere avec succes.\n", nomFichier);
+}
+
+// --- Passer un Examen ---
+void Passer_QCM() {
+    char nomQCM[50], nomFichier[60], nav;
+    int ptsNeg, repMult, modeSeq, nbQ;
+    int reponses_etudiant[MAX_Q][4] = {0}; // Stocke l'état coché (1) ou non (0) pour A, B, C, D
+
+    printf("\nEntrez le nom du QCM a charger (ex: foot_mondial, foot_cl, ou un QCM prof) : ");
+    scanf("%49s", nomQCM); vider_tampon();
+    sprintf(nomFichier, "%s.txt", nomQCM);
+
+    FILE* f = fopen(nomFichier, "r");
+    if (!f) { 
+        printf("🚨 Fichier '%s' introuvable. Verifiez le nom.\n", nomFichier); 
+        return; 
+    }
+
+    fscanf(f, "%d %d %d %d", &ptsNeg, &repMult, &modeSeq, &nbQ);
+    int c; while ((c = fgetc(f)) != '\n' && c != EOF); // Nettoyage de ligne du fichier
+
+    Question* questions = malloc(nbQ * sizeof(Question));
+    for (int i = 0; i < nbQ; i++) {
+        fgets(questions[i].enonce, MAX_TEXT, f);   questions[i].enonce[strcspn(questions[i].enonce, "\n")] = 0;
+        fgets(questions[i].props[0], MAX_TEXT, f); questions[i].props[0][strcspn(questions[i].props[0], "\n")] = 0;
+        fgets(questions[i].props[1], MAX_TEXT, f); questions[i].props[1][strcspn(questions[i].props[1], "\n")] = 0;
+        fgets(questions[i].props[2], MAX_TEXT, f); questions[i].props[2][strcspn(questions[i].props[2], "\n")] = 0;
+        fgets(questions[i].props[3], MAX_TEXT, f); questions[i].props[3][strcspn(questions[i].props[3], "\n")] = 0;
+        fscanf(f, "%9s", questions[i].solution);
+        while ((c = fgetc(f)) != '\n' && c != EOF);
+    }
+    fclose(f);
+
+    int q_actuelle = 0;
+    time_t t_debut = time(NULL);
+
+    while (q_actuelle < nbQ) {
+        printf("\n--- Question %d/%d ---\n%s\n", q_actuelle + 1, nbQ, questions[q_actuelle].enonce);
+        for (int i = 0; i < 4; i++) {
+            printf("  %c. [%c] %s\n", 'A' + i, reponses_etudiant[q_actuelle][i] ? 'X' : ' ', questions[q_actuelle].props[i]);
+        }
+
+        printf("\nAction (Lettre A-D pour cocher | 'S'=Suivant | 'P'=Precedent | 'T'=Terminer) : ");
+        scanf(" %c", &nav); vider_tampon();
+        
+        // Insensibilité à la casse : conversion manuelle via la table ASCII (-32)
+        if (nav >= 'a' && nav <= 'z') nav -= 32;
+
+        if (nav >= 'A' && nav <= 'D') {
+            int choix = nav - 'A';
+            if (repMult) {
+                reponses_etudiant[q_actuelle][choix] = !reponses_etudiant[q_actuelle][choix]; // Décoche / Coche
+            } else {
+                for (int i = 0; i < 4; i++) reponses_etudiant[q_actuelle][i] = 0; // Efface tout
+                reponses_etudiant[q_actuelle][choix] = 1; // Coche la seule réponse
+            }
+        } else if (nav == 'S') {
+            int coche = 0;
+            for (int i = 0; i < 4; i++) if (reponses_etudiant[q_actuelle][i]) coche = 1;
+            
+            if (modeSeq && !coche) {
+                printf("⚠️ [Bloque] Le mode sequentiel est actif. Reponse obligatoire !\n");
+            } else {
+                q_actuelle++;
+            }
+        } else if (nav == 'P') {
+            if (modeSeq) {
+                printf("⚠️ [Bloque] Mode sequentiel actif. Retour en arriere interdit.\n");
+            } else if (q_actuelle > 0) {
+                q_actuelle--;
+            } else {
+                printf("Vous etes a la premiere question.\n");
+            }
+        } else if (nav == 'T') {
+            char confirmation;
+            printf("Voulez-vous vraiment terminer le test ? (O/N) : ");
+            scanf(" %c", &confirmation); vider_tampon();
+            if (confirmation == 'O' || confirmation == 'o') break;
+        }
+    }
+
+    // --- Module d'Évaluation ---
+    float note = 0, pts_par_q = 20.0 / nbQ;
+    printf("\n================ CORRECTION ================\n");
+    
+    for (int i = 0; i < nbQ; i++) {
+        int faux = 0, coche = 0;
+        
+        for (int j = 0; j < 4; j++) {
+            int est_bonne = 0;
+            // Parcourt la chaîne de caractères de la solution pour voir si la lettre s'y trouve
+            for (size_t s = 0; s < strlen(questions[i].solution); s++) {
+                if (questions[i].solution[s] == ('A' + j)) est_bonne = 1;
+            }
+            if (reponses_etudiant[i][j]) coche = 1;
+            if (reponses_etudiant[i][j] != est_bonne) faux = 1; // Erreur détectée
+        }
+
+        if (!faux) {
+            note += pts_par_q;
+            printf("Question %d : Juste (+%.2f)\n", i + 1, pts_par_q);
+        } else if (ptsNeg && coche) {
+            note -= (pts_par_q / 2.0); // Pénalité si l'enseignant a activé l'option
+            printf("Question %d : Fausse (-%.2f de penalite)\n", i + 1, pts_par_q / 2.0);
+        } else {
+            printf("Question %d : Fausse ou vide (0.00)\n", i + 1);
+        }
+    }
+
+    if (note < 0) note = 0; // Sécurité anti-note négative globale
+    printf("--------------------------------------------\n");
+    printf("NOTE FINALE : %.2f / 20 (Temps passe : %.0fs)\n", note, difftime(time(NULL), t_debut));
+    
+    sauvegarder_note(nomQCM, note); // Enregistre la note correctement ici
+    free(questions);
+}
+
+// --- Menu Espace Étudiant ---
+void Mode_Etudiant() {
+    int choix_etudiant = 0;
+    while (choix_etudiant != 3) {
+        printf("\n--- ESPACE ETUDIANT ---\n");
+        printf("1. Passer un QCM\n");
+        printf("2. Consulter mes notes\n");
+        printf("3. Retour au menu principal\n");
+        printf("Votre choix : ");
+        
+        if (scanf("%d", &choix_etudiant) != 1) {
+            printf("🚨 Entrez un chiffre valide.\n");
+            vider_tampon();
+            continue;
+        }
+        vider_tampon();
+
+        if (choix_etudiant == 1) Passer_QCM();
+        else if (choix_etudiant == 2) Consulter_Notes();
+    }
+}
+
+// --- Menu Principal ---
+int main() {
+    int choix = 0;
+    generer_exemples_football(); // Pré-remplit les 3 fichiers de démo automatiquement
+
+    while (choix != 3) {
+        printf("\n--- MENU PRINCIPAL - QUESTIONS POUR UN TEKIEN ---\n");
+        printf("1. Mode Enseignant (Mot de passe requis)\n");
+        printf("2. Mode Etudiant\n");
+        printf("3. Quitter le programme\n");
+        printf("Votre choix : ");
+        
+        if (scanf("%d", &choix) != 1) {
+            printf("🚨 Erreur de saisie. Entrez un chiffre.\n");
+            vider_tampon();
+            continue;
+        }
+        vider_tampon();
+
+        if (choix == 1) Mode_Enseignant();
+        else if (choix == 2) Mode_Etudiant();
+    }
+    return 0;
+}

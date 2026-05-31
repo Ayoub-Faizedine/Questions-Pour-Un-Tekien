@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "structures.h" // On appelle votre fichier commun
-#include "fonctions.h" // A ajouter si tu as le fichier fonctions.h
 
 void LancerModeEtudiant() {
     char nomFichier[60];
